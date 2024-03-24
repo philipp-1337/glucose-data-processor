@@ -50,7 +50,7 @@ filtered_df['Date'] = filtered_df['Date'].dt.strftime('%d-%m-%Y %H:%M')
 filtered_df.sort_values(by='Date', ascending=True, inplace=True)
 
 # Save the cleaned and filtered data to a new CSV file
-filtered_df.to_csv('filtered_glucose_final_desc.csv', index=False)
+filtered_df.to_csv('filtered_glucose.csv', index=False)
 
-print("Data processing complete. The filtered data is saved in 'filtered_glucose_final_desc.csv'.")
+print("Data processing complete. The filtered data is saved in 'filtered_glucose.csv'.")
 
