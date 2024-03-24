@@ -4,49 +4,49 @@ import pandas as pd
 df = pd.read_csv('glucose.csv', parse_dates=['Gerätezeitstempel'], dayfirst=True)
 
 # Combine "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column
-df['Glukosewert mg/dL'] = df['Glukosewert-Verlauf mg/dL'].combine_first(df['Glukose-Scan mg/dL'])
+df['BG'] = df['Glukosewert-Verlauf mg/dL'].combine_first(df['Glukose-Scan mg/dL'])
 
-# Attempt to convert "Glukosewert mg/dL" to floats, safely handling non-numeric values
-df['Glukosewert mg/dL'] = pd.to_numeric(df['Glukosewert mg/dL'], errors='coerce')
+# Attempt to convert "BG" to floats, safely handling non-numeric values
+df['BG'] = pd.to_numeric(df['BG'], errors='coerce')
 
-# Now drop any rows where 'Glukosewert mg/dL' could not be converted to a number (and thus is NaN)
-df = df.dropna(subset=['Glukosewert mg/dL'])
+# Now drop any rows where 'BG' could not be converted to a number (and thus is NaN)
+df = df.dropna(subset=['BG'])
 
 # Round and convert to int
-df['Glukosewert mg/dL'] = df['Glukosewert mg/dL'].astype(float).round(0).astype(int)
+df['BG'] = df['BG'].astype(float).round(0).astype(int)
 
-# Format the "Gerätezeitstempel" to remove seconds
-df['Gerätezeitstempel'] = df['Gerätezeitstempel'].dt.strftime('%Y-%m-%d %H:%M')
+# Keep only the necessary columns and rename them
+df = df[['Gerätezeitstempel', 'BG']]
+df.rename(columns={'Gerätezeitstempel': 'Date'}, inplace=True)
 
-# Keep only the necessary columns
-df = df[['Gerätezeitstempel', 'Glukosewert mg/dL']]
-
-# Re-parse the "Gerätezeitstempel" to ensure proper sorting
-df['Gerätezeitstempel'] = pd.to_datetime(df['Gerätezeitstempel'], format='%Y-%m-%d %H:%M')
-
-# Sort by "Gerätezeitstempel"
-df.sort_values(by='Gerätezeitstempel', inplace=True)
+# Format the "Date" to the desired string format "DD-MM-YYYY HH:MM"
+df['Date'] = df['Date'].dt.strftime('%d-%m-%Y %H:%M')
 
 # Define the specific date and time ranges to keep
 time_ranges = [
-    ("2024-03-22 02:44", "2024-03-22 10:26"),
-    ("2024-03-20 02:43", "2024-03-20 21:01"),
-    ("2024-03-15 01:32", "2024-03-15 10:16"),
-    ("2024-03-12 01:25", "2024-03-12 07:05"),
-    ("2024-03-05 00:01", "2024-03-05 21:05"),
-    ("2024-03-04 02:15", "2024-03-04 23:59"),
+    ("22-03-2024 02:44", "22-03-2024 10:26"),
+    ("20-03-2024 02:43", "20-03-2024 21:01"),
+    ("15-03-2024 01:32", "15-03-2024 10:16"),
+    ("12-03-2024 01:25", "12-03-2024 07:05"),
+    ("05-03-2024 00:01", "05-03-2024 21:05"),
+    ("04-03-2024 02:15", "04-03-2024 23:59"),
 ]
+
+# Re-parse the "Date" to ensure proper filtering since we've changed its format
+df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y %H:%M')
 
 # Filter the data based on the specified date and time ranges
 filtered_df = pd.DataFrame()
 for start, end in time_ranges:
-    mask = (df['Gerätezeitstempel'] >= pd.to_datetime(start)) & (df['Gerätezeitstempel'] <= pd.to_datetime(end))
+    start_dt = pd.to_datetime(start, dayfirst=True)
+    end_dt = pd.to_datetime(end, dayfirst=True)
+    mask = (df['Date'] >= start_dt) & (df['Date'] <= end_dt)
     filtered_df = pd.concat([filtered_df, df.loc[mask]])
 
-# Convert "Gerätezeitstempel" back to the desired string format without seconds for final output
-filtered_df['Gerätezeitstempel'] = filtered_df['Gerätezeitstempel'].dt.strftime('%Y-%m-%d %H:%M')
+# Convert "Date" back to the desired string format "DD-MM-YYYY HH:MM" for final output
+filtered_df['Date'] = filtered_df['Date'].dt.strftime('%d-%m-%Y %H:%M')
 
 # Save the cleaned and filtered data to a new CSV file
-filtered_df.to_csv('filtered_glucose_no_seconds.csv', index=False)
+filtered_df.to_csv('filtered_glucose_final.csv', index=False)
 
-print("Data processing complete. The filtered data is saved in 'filtered_glucose_no_seconds.csv'.")
+print("Data processing complete. The filtered data is saved in 'filtered_glucose_final.csv'.")
