@@ -3,11 +3,20 @@ import pandas as pd
 # Load the CSV file
 df = pd.read_csv('glucose.csv', parse_dates=['Gerätezeitstempel'], dayfirst=True)
 
-# Combine "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column
+# Combine "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column, prioritizing "Verlauf" when both are present
 df['Glukosewert mg/dL'] = df['Glukosewert-Verlauf mg/dL'].fillna(df['Glukose-Scan mg/dL'])
+
+# Ensure the combined glucose values are integers
+df['Glukosewert mg/dL'] = df['Glukosewert mg/dL'].astype(float).round(0).astype(int)
+
+# Format the "Gerätezeitstempel" to remove seconds
+df['Gerätezeitstempel'] = df['Gerätezeitstempel'].dt.strftime('%Y-%m-%d %H:%M')
 
 # Keep only the necessary columns
 df = df[['Gerätezeitstempel', 'Glukosewert mg/dL']]
+
+# Re-parse the "Gerätezeitstempel" to ensure proper sorting
+df['Gerätezeitstempel'] = pd.to_datetime(df['Gerätezeitstempel'], format='%Y-%m-%d %H:%M')
 
 # Sort by "Gerätezeitstempel"
 df.sort_values(by='Gerätezeitstempel', inplace=True)
@@ -25,10 +34,13 @@ time_ranges = [
 # Filter the data based on the specified date and time ranges
 filtered_df = pd.DataFrame()
 for start, end in time_ranges:
-    mask = (df['Gerätezeitstempel'] >= start) & (df['Gerätezeitstempel'] <= end)
+    mask = (df['Gerätezeitstempel'] >= pd.to_datetime(start)) & (df['Gerätezeitstempel'] <= pd.to_datetime(end))
     filtered_df = pd.concat([filtered_df, df.loc[mask]])
 
-# Save the cleaned and filtered data to a new CSV file
-filtered_df.to_csv('filtered_glucose.csv', index=False)
+# Convert "Gerätezeitstempel" back to the desired string format without seconds for final output
+filtered_df['Gerätezeitstempel'] = filtered_df['Gerätezeitstempel'].dt.strftime('%Y-%m-%d %H:%M')
 
-print("Data processing complete. The filtered data is saved in 'filtered_glucose.csv'.")
+# Save the cleaned and filtered data to a new CSV file
+filtered_df.to_csv('filtered_glucose_no_seconds.csv', index=False)
+
+print("Data processing complete. The filtered data is saved in 'filtered_glucose_no_seconds.csv'.")
