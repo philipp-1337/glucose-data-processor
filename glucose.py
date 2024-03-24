@@ -46,7 +46,11 @@ for start, end in time_ranges:
 # Convert "Date" back to the desired string format "DD-MM-YYYY HH:MM" for final output
 filtered_df['Date'] = filtered_df['Date'].dt.strftime('%d-%m-%Y %H:%M')
 
-# Save the cleaned and filtered data to a new CSV file
-filtered_df.to_csv('filtered_glucose_final.csv', index=False)
+# Sort the dataframe by "Date" in descending order
+filtered_df.sort_values(by='Date', ascending=True, inplace=True)
 
-print("Data processing complete. The filtered data is saved in 'filtered_glucose_final.csv'.")
+# Save the cleaned and filtered data to a new CSV file
+filtered_df.to_csv('filtered_glucose_final_desc.csv', index=False)
+
+print("Data processing complete. The filtered data is saved in 'filtered_glucose_final_desc.csv'.")
+
