@@ -3,10 +3,16 @@ import pandas as pd
 # Load the CSV file
 df = pd.read_csv('glucose.csv', parse_dates=['Gerätezeitstempel'], dayfirst=True)
 
-# Combine "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column, prioritizing "Verlauf" when both are present
-df['Glukosewert mg/dL'] = df['Glukosewert-Verlauf mg/dL'].fillna(df['Glukose-Scan mg/dL'])
+# Combine "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column
+df['Glukosewert mg/dL'] = df['Glukosewert-Verlauf mg/dL'].combine_first(df['Glukose-Scan mg/dL'])
 
-# Ensure the combined glucose values are integers
+# Attempt to convert "Glukosewert mg/dL" to floats, safely handling non-numeric values
+df['Glukosewert mg/dL'] = pd.to_numeric(df['Glukosewert mg/dL'], errors='coerce')
+
+# Now drop any rows where 'Glukosewert mg/dL' could not be converted to a number (and thus is NaN)
+df = df.dropna(subset=['Glukosewert mg/dL'])
+
+# Round and convert to int
 df['Glukosewert mg/dL'] = df['Glukosewert mg/dL'].astype(float).round(0).astype(int)
 
 # Format the "Gerätezeitstempel" to remove seconds
