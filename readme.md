@@ -17,7 +17,8 @@ This Python script is designed to process glucose monitoring data from a CSV fil
 
 2. **Place the CSV File:**
    - The script expects a file named `glucose.csv` in the same directory. Ensure this file exists and follows the expected format.
-   - For testing you can rename the provided test file `testfile_glucose.csv`.
+   - For testing you can rename the provided test file `glucose.csv.testfile`.
+   - Note: If you use the file from www.libreview.com remove the first row
 
 3. **Running the Script:**
    - Navigate to the directory containing the script.
