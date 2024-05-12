@@ -1,7 +1,15 @@
 import pandas as pd
+from tkinter import Tk, filedialog
+
+# Create a Tkinter window
+root = Tk()
+root.withdraw()  # Hide the root window
+
+# Ask the user to select a file
+file_path = filedialog.askopenfilename(title="Select CSV file", filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
 
 # Load the CSV file
-df = pd.read_csv('glucose.csv', parse_dates=['Gerätezeitstempel'], dayfirst=True)
+df = pd.read_csv(file_path, skiprows=1, parse_dates=['Gerätezeitstempel'], dayfirst=True)
 
 # Combine "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column
 df['BG'] = df['Glukosewert-Verlauf mg/dL'].combine_first(df['Glukose-Scan mg/dL'])
@@ -24,12 +32,8 @@ df['Date'] = df['Date'].dt.strftime('%d-%m-%Y %H:%M')
 
 # Define the specific date and time ranges to keep
 time_ranges = [
-    ("22-03-2024 02:44", "22-03-2024 10:26"),
-    ("20-03-2024 02:43", "20-03-2024 21:01"),
-    ("15-03-2024 01:32", "15-03-2024 10:16"),
-    ("12-03-2024 01:25", "12-03-2024 07:05"),
-    ("05-03-2024 00:01", "05-03-2024 21:05"),
-    ("04-03-2024 02:15", "04-03-2024 23:59"),
+    ("11-05-2024 15:30", "11-05-2024 22:00"),
+    ("12-05-2024 00:30", "12-05-2024 10:00"),
 ]
 
 # Re-parse the "Date" to ensure proper filtering since we've changed its format
