@@ -15,9 +15,9 @@ This Python script is designed to process glucose monitoring data from a CSV fil
    - Ensure Python 3 is installed on your system.
    - Install Pandas library: Run `pip install pandas` in your terminal or command prompt.
 
-2. **Place the CSV File:**
-   - The script expects a file named `glucose.csv` in the same directory. Ensure this file exists and follows the expected format.
-   - For testing you can rename the provided test file `glucose.csv.testfile`.
+2. **Have the CSV File ready:**
+   - The script will ask to choose a CSV file and will expect one in the format that LibreView provides.
+   - For testing you can use the provided test file `glucose.csv.testfile`.
 
 3. **Running the Script:**
    - Navigate to the directory containing the script.
