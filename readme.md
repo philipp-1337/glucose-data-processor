@@ -1,43 +1,75 @@
 # Glucose Data Processor
 
 ## Overview
-This Python script is designed to process glucose monitoring data from a CSV file downloaded from LibreView. It focuses on cleaning the data by removing unnecessary columns, combining relevant glucose measurement columns, filtering data based on specific date-time input, and finally sorting the results in ascending order by date-time.
+This Python script is designed to process glucose monitoring data from a CSV file downloaded from LibreView. It cleans and transforms the data by removing unnecessary columns, combining relevant glucose measurement columns, filtering data based on specific date-time ranges, and finally sorting the results in ascending order by date-time.
 
 ## Features
-- **Data Cleaning:** Merges "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column while removing all other columns.
-- **Date-Time Formatting:** Adjusts the format of the date-time column to "DD-MM-YYYY HH:MM".
-- **Data Filtering:** Keeps only the rows within specified date-time ranges for certain dates.
-- **Sorting:** Orders the filtered results in descending order based on the date-time column.
-- **Column Renaming:** Renames columns to "Date" and "BG" for readability.
+- **Data Cleaning:** Combines "Glukosewert-Verlauf mg/dL" and "Glukose-Scan mg/dL" into a single column ("BG") while removing all other columns.
+- **Error Handling:** Safely converts glucose data to numeric format, excluding invalid or non-numeric values.
+- **Date-Time Formatting:** Adjusts the format of the "Gerätezeitstempel" column to "DD-MM-YYYY HH:MM".
+- **Data Filtering:** Filters rows based on specified date-time ranges for selected dates.
+- **Sorting:** Orders the filtered results in ascending order based on the date-time column.
+- **Output:** Generates a cleaned and filtered CSV file with only the necessary columns, renamed for readability.
+
+## Requirements
+- Python 3.x
+- Libraries:
+  - `pandas`
+
+You can install the dependencies using the following command:
+ ```bash
+pip install -r requirements.tx
+ ```
 
 ## How to Use
-1. **Prerequisites:**
-   - Ensure Python 3 is installed on your system.
-   - Install Pandas library: Run `pip install pandas` in your terminal or command prompt.
+1.	Set Up Your Environment:
+* Create and activate a virtual environment (optional but recommended):
+ ```bash
+python -m venv venv
+source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+ ```
+* Install dependencies:
+ ```bash
+pip install -r requirements.txt
+ ```
+2.	Prepare Your CSV File:
+* Ensure you have a CSV file exported from LibreView. The file should include columns such as “Gerätezeitstempel”, “Glukosewert-Verlauf mg/dL”, and “Glukose-Scan mg/dL”.
+* Place the file in the same directory as the script or have its location ready.
+3.	Run the Script:
+* Execute the script by running:
+ ```bash
+python glucose_data_processor.py
+ ```
+* Use the file selection dialog to choose your CSV file.
 
-2. **Have the CSV File ready:**
-   - The script will ask to choose a CSV file and will expect one in the format that LibreView provides.
-   - For testing you can use the provided test file `glucose.csv.testfile`.
-
-3. **Running the Script:**
-   - Navigate to the directory containing the script.
-   - Run the script by executing `python glucose_data_processor.py` in your terminal or command prompt.
-
-4. **Output:**
-   - The script generates a file named `filtered_glucose.csv` with the processed data.
+4.	Review the Output:
+* The processed data will be saved in a file named filtered_glucose.csv in the same directory as the script.
 
 ## Customization
-To adjust the script for different datasets or requirements, consider modifying the following sections:
-- **Data Filtering Ranges:** Edit the `time_ranges` list to include or exclude different date-time ranges.
-- **Column Names and Formats:** Adjust column names and date-time formats in the script as needed for different datasets.
+* Date-Time Filtering:
+* The script uses hardcoded date-time ranges to filter data. You can modify the time_ranges list in the script to customize the filtering criteria:
+```python
+time_ranges = [
+    ("20-01-2025 07:19", "20-01-2025 16:05"),
+    ("21-01-2025 03:58", "21-01-2025 10:25"),
+]
+```
+* Column Names:
+* If your dataset uses different column names, update the script to match those column names in the pd.read_csv and data processing sections.
 
 ## Known Limitations
-- The script expects the input CSV file to have specific column names as per the given dataset. Changes in the input file structure may require corresponding adjustments in the script.
-- Date-time filtering is based on hardcoded ranges. Dynamic filtering based on user input or other criteria would require script modifications.
+* Input File Format: The script assumes the input CSV file follows the format exported by LibreView. Any deviations may require script modifications.
+* Hardcoded Date-Time Ranges: The filtering is static and based on pre-defined ranges. For more dynamic filtering, user input or external configuration would be required.
+* Locale-Specific Parsing: The script assumes a dayfirst=True format for dates. Adjust if the date format differs.
 
 ## Contributing
-Contributions to improve the script or extend its functionality are welcome. Please feel free to fork the repository, make your changes, and submit a pull request.
+Contributions to improve or extend the script are welcome. Feel free to:
+* Fork the repository
+* Make changes or enhancements
+* Submit a pull request with a detailed description of the changes
 
 ## License
-This project is open-source and available under the MIT License. See the LICENSE file for more details.
+This project is open-source and available under the MIT License.
 
+## Acknowledgments
+This script was created to simplify and streamline glucose data analysis, particularly for LibreView datasets.

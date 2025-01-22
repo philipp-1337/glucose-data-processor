@@ -32,8 +32,8 @@ df['Date'] = df['Date'].dt.strftime('%d-%m-%Y %H:%M')
 
 # Define the specific date and time ranges to keep
 time_ranges = [
-    ("13-09-2024 03:16", "13-09-2024 10:00"),
-    ("13-09-2024 21:56", "14-09-2024 05:45"),
+    ("20-01-2025 07:19", "20-01-2025 16:05"),
+    ("21-01-2025 03:58", "21-01-2025 10:25"),
 ]
 
 # Re-parse the "Date" to ensure proper filtering since we've changed its format
